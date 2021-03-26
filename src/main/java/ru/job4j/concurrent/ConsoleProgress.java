@@ -2,11 +2,10 @@ package ru.job4j.concurrent;
 
 public class ConsoleProgress implements Runnable {
 
-    private final char[] process = {'\\', '|', '/', '-'};
-
     @Override
     public void run() {
         int count = 0;
+        char[] process = {'\\', '|', '/', '-'};
         while (!Thread.currentThread().isInterrupted()) {
             System.out.printf("\rload: %c", process[(count++) % 4]);
             try {
