@@ -7,7 +7,7 @@ public class MultiCountBarrier {
 
         Thread counter = new Thread(() -> {
             System.out.println(Thread.currentThread().getName());
-            for (int i = 0; i < 30; i++) {
+            for (int i = 0; i <= 30; i++) {
                 countBarrier.count();
             }
         });
@@ -28,5 +28,8 @@ public class MultiCountBarrier {
         counter.start();
         thread1.start();
         thread2.start();
+        System.out.println("counter state " + counter.getState());
+        System.out.println("thread1 state " + thread1.getState());
+        System.out.println("thread2 state " + thread2.getState());
     }
 }
