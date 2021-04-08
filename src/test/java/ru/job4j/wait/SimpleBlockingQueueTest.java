@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.IntStream;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
@@ -14,11 +13,15 @@ public class SimpleBlockingQueueTest {
     @Test
     public void whenOfferThenPoll() throws InterruptedException {
 
-        SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>();
+        SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>(10);
 
         Thread producer = new Thread(() -> {
             for (int i = 0; i <= 10; i++) {
-                queue.offer(i);
+                try {
+                    queue.offer(i);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -34,6 +37,7 @@ public class SimpleBlockingQueueTest {
         consumer.start();
         producer.start();
         consumer.join();
+        producer.join();
         assertThat(queue.getSize(), is(5));
         assertEquals(6, queue.poll().intValue());
     }
@@ -41,11 +45,17 @@ public class SimpleBlockingQueueTest {
     @Test
     public void whenFetchAllThenGetIt() throws InterruptedException {
         final CopyOnWriteArrayList<Integer> buffer = new CopyOnWriteArrayList<>();
-        final SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>();
+        final SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>(10);
         Thread producer = new Thread(
-                () -> IntStream.range(0, 5).forEach(
-                        queue::offer
-                )
+                () -> {
+                    for (int index = 0; index < 5; index++) {
+                        try {
+                            queue.offer(index);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
         );
         producer.start();
         Thread consumer = new Thread(
