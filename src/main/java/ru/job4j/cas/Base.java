@@ -19,10 +19,6 @@ public class Base {
         return version;
     }
 
-    public final Base setVersion() {
-        return new Base(id, version + 1);
-    }
-
     public String getName() {
         return name;
     }
